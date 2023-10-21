@@ -11,7 +11,9 @@ SELECT ?s ?p ?o WHERE {
 """
 results = graph.query(sparql_query)
 pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(results)
+for result in results:
+    pp.pprint(result)
+
 
 print()
 print('*********************')
@@ -24,7 +26,8 @@ SELECT ?name WHERE {
 }
 """
 results = graph.query(sparql_query)
-pp.pprint(list(results))
+for result in results:
+    pp.pprint(result)
 
 print()
 print('*********************')
@@ -39,4 +42,5 @@ SELECT ?name WHERE {
 }
 """
 results = graph.query(sparql_query)
-pp.pprint(list(results))
+for result in results:
+    pp.pprint(result)
