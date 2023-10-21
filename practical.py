@@ -1,51 +1,46 @@
-#!/usr/bin/env python
-#
-import requests
-import pprint
-from io import StringIO
+import rdflib
+from rdflib import Graph
+from rdflib.plugins.sparql import prepareQuery
 
-# 设定你的SPARQL端点
-SPARQL_ENDPOINT = 'http://localhost:3030/s2484724-epcc/sparql'
+# Initialize the RDF graph
+g = Graph()
 
-# 创建一个字符串缓冲区来构建SPARQL查询
-sBuffer = StringIO()
-sBuffer2 = StringIO()
-sBuffer3 = StringIO()
-# 查询并打印数据集中的所有三元组
-sBuffer.write("SELECT ?s ?p ?o where {?s ?p ?o}")
-sparql_query = sBuffer.getvalue()
-print(f'SPARQL query -> {sparql_query}')
-response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-jsonResponse = response.json()
-pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(response.json())
+# Fetch and parse the RDF data from the SPARQL endpoint
+g.parse(SPARQL_ENDPOINT, format="application/rdf+xml")
+
+# Query and print all the triples in the dataset
+query = prepareQuery("SELECT ?s ?p ?o WHERE {?s ?p ?o}")
+print(f'SPARQL query -> {query}')
+for row in g.query(query):
+    print(row)
 
 print()
 print('*********************')
 print()
 
-# 查询RDF数据中的人名
-sBuffer2.write('PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n')
-sBuffer2.write("SELECT ?name WHERE {?person foaf:name ?name}")
-sparql_query = sBuffer2.getvalue()
-print(f'SPARQL query -> {sparql_query}')
-#response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-
-
-jsonResponse = response.json()
-pp.pprint(response.json())
+# Query RDF data for people's names
+query = prepareQuery(
+    '''
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+    SELECT ?name WHERE {?person foaf:name ?name}
+    '''
+)
+print(f'SPARQL query -> {query}')
+for row in g.query(query):
+    print(row)
 
 print()
 print('*********************')
 print()
 
-# 查询住在爱丁堡附近的人
-sBuffer3.write('PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n')
-sBuffer3.write('PREFIX dbpedia: <http://dbpedia.org/resource/#> \n')
-sBuffer3.write("SELECT ?name WHERE {?person foaf:based_near dbpedia:Edinburgh; foaf:name ?name}")
-sparql_query = sBuffer3.getvalue()
-print(f'SPARQL query -> {sparql_query}')
-response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-jsonResponse = response.json()
-pp.pprint(response.json())
+# Query for people who live near Edinburgh
+query = prepareQuery(
+    '''
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+    PREFIX dbpedia: <http://dbpedia.org/resource/#> 
+    SELECT ?name WHERE {?person foaf:based_near dbpedia:Edinburgh; foaf:name ?name}
+    '''
+)
+print(f'SPARQL query -> {query}')
+for row in g.query(query):
+    print(row)
