@@ -9,16 +9,20 @@ SPARQL_ENDPOINT = 'http://localhost:3030/s2484724-epcc/sparql'
 # 创建RDF图形实例
 g = Graph()
 
-# 加载RDF数据
-g.parse(SPARQL_ENDPOINT, format="application/rdf+xml")
-
 # 使用RDFLib和SPARQL查询数据
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
 DBPEDIA = Namespace("http://dbpedia.org/resource/")
 
 # 查询并打印数据集中的所有三元组
-for s, p, o in g.triples((None, None, None)):
-    print(s, p, o)
+all_triples_query = """
+SELECT ?s ?p ?o WHERE {
+    ?s ?p ?o
+}
+"""
+result = g.query(all_triples_query, initBindings={'sparql': SPARQL_ENDPOINT})
+
+for row in result:
+    print(row)
 
 print()
 print('*********************')
@@ -31,7 +35,8 @@ SELECT ?name WHERE {
     ?person foaf:name ?name
 }
 """
-for row in g.query(q1):
+result = g.query(q1, initBindings={'sparql': SPARQL_ENDPOINT})
+for row in result:
     print(row)
 
 print()
@@ -47,5 +52,6 @@ SELECT ?name WHERE {
            foaf:name ?name
 }
 """
-for row in g.query(q2):
+result = g.query(q2, initBindings={'sparql': SPARQL_ENDPOINT})
+for row in result:
     print(row)
