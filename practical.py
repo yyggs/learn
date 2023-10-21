@@ -30,7 +30,7 @@ sBuffer.write("SELECT ?name WHERE {?person foaf:name ?name}")
 sparql_query = sBuffer.getvalue()
 print(f'SPARQL query -> {sparql_query}')
 #response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query}, headers=headers)
+response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
 if response.status_code == 200:
     try:
         jsonResponse = response.json()
