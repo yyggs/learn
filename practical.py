@@ -29,9 +29,21 @@ sBuffer.write('PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n')
 sBuffer.write("SELECT ?name WHERE {?person foaf:name ?name}")
 sparql_query = sBuffer.getvalue()
 print(f'SPARQL query -> {sparql_query}')
-response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
-jsonResponse = response.json()
-pp.pprint(response.json())
+#response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query})
+response = requests.post(SPARQL_ENDPOINT, data={'query': sparql_query}, headers=headers)
+if response.status_code == 200:
+    try:
+        jsonResponse = response.json()
+        pp.pprint(jsonResponse)
+    except simplejson.errors.JSONDecodeError:
+        print("Failed to decode JSON from response.")
+        print(response.text)
+else:
+    print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
+    print(response.text)
+
+#jsonResponse = response.json()
+#pp.pprint(response.json())
 
 print()
 print('*********************')
