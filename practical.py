@@ -1,57 +1,49 @@
 #!/usr/bin/env python
-
-from rdflib import Graph, Namespace
+#
+import rdflib
+from rdflib.plugins.sparql import prepareQuery
 import pprint
 
-# 设定你的SPARQL端点
-SPARQL_ENDPOINT = 'http://localhost:3030/s2484724-epcc/sparql'
-
-# 创建RDF图形实例
-g = Graph()
-
-# 使用RDFLib和SPARQL查询数据
-FOAF = Namespace("http://xmlns.com/foaf/0.1/")
-DBPEDIA = Namespace("http://dbpedia.org/resource/")
+# 从foaf_example.ttl文件中读取数据
+graph = rdflib.Graph()
+graph.parse("foaf_example.ttl", format="turtle")
 
 # 查询并打印数据集中的所有三元组
-all_triples_query = """
+sparql_query = """
 SELECT ?s ?p ?o WHERE {
     ?s ?p ?o
 }
 """
-result = g.query(all_triples_query, initBindings={'sparql': SPARQL_ENDPOINT})
-
-for row in result:
-    print(row)
+results = graph.query(sparql_query)
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(list(results))
 
 print()
 print('*********************')
 print()
 
 # 查询RDF数据中的人名
-q1 = """
-PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+sparql_query = """
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?name WHERE {
     ?person foaf:name ?name
 }
 """
-result = g.query(q1, initBindings={'sparql': SPARQL_ENDPOINT})
-for row in result:
-    print(row)
+results = graph.query(sparql_query)
+pp.pprint(list(results))
 
 print()
 print('*********************')
 print()
 
 # 查询住在爱丁堡附近的人
-q2 = """
-PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
-PREFIX dbpedia: <http://dbpedia.org/resource/> 
+sparql_query = """
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dbpedia: <http://dbpedia.org/resource/>
 SELECT ?name WHERE {
     ?person foaf:based_near dbpedia:Edinburgh;
            foaf:name ?name
 }
 """
-result = g.query(q2, initBindings={'sparql': SPARQL_ENDPOINT})
-for row in result:
-    print(row)
+results = graph.query(sparql_query)
+pp.pprint(list(results))
