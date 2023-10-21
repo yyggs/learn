@@ -25,7 +25,6 @@ print('*********************')
 print()
 
 # 查询RDF数据中的人名
-sBuffer.truncate(0)
 sBuffer2.write('PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n')
 sBuffer2.write("SELECT ?name WHERE {?person foaf:name ?name}")
 sparql_query = sBuffer2.getvalue()
@@ -42,7 +41,6 @@ print('*********************')
 print()
 
 # 查询住在爱丁堡附近的人
-sBuffer2.truncate(0)
 sBuffer3.write('PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n')
 sBuffer3.write('PREFIX dbpedia: <http://dbpedia.org/resource/#> \n')
 sBuffer3.write("SELECT ?name WHERE {?person foaf:based_near dbpedia:Edinburgh; foaf:name ?name}")
